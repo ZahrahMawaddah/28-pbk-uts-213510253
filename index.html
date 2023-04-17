@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Zahra's Tracker</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
+  <body>
+    <h1><b>Daftar Target Belajar</b></h1>
+    <form>
+      <label for="activity">Kegiatan:</label>
+      <input type="text" id="activity" name="activity"><br><br>
+      <button type="button" onclick="addActivity()">Tambah</button>
+      <button type="button" onclick="filterUnfinished()">Filter</button>
+    </form>
+    <ul id="activityList">
+    </ul>
+
+    <script>
+      var activities = [];
+
+      function addActivity() {
+        var activity = document.getElementById("activity").value;
+        if (activity !== "") {
+          activities.push({name: activity, completed: false});
+          updateList();
+          document.getElementById("activity").value = "";
+        }
+      }
+
+      function updateList() {
+        var list = document.getElementById("activityList");
+        list.innerHTML = "";
+        for (var i = 0; i < activities.length; i++) {
+          var activity = activities[i];
+          var node = document.createElement("LI");
+          var textnode = document.createTextNode(activity.name);
+          if (activity.completed) {
+            node.style.textDecoration = "line-through";
+          }
+          node.appendChild(textnode);
+          var cancelButton = document.createElement("BUTTON");
+          cancelButton.innerHTML = "Hapus";
+          cancelButton.onclick = (function(index) {
+            return function() {
+              activities.splice(index, 1);
+              updateList();
+            }
+          })(i);
+          node.appendChild(cancelButton);
+          var completeButton = document.createElement("BUTTON");
+          completeButton.innerHTML = "Selesai";
+          completeButton.onclick = (function(index) {
+            return function() {
+              activities[index].completed = true;
+              updateList();
+            }
+          })(i);
+          node.appendChild(completeButton);
+          list.appendChild(node);
+        }
+      }
+
+      function filterUnfinished() {
+        var unfinishedActivities = activities.filter(function(activity) {
+          return !activity.completed;
+        });
+        activities = unfinishedActivities;
+        updateList();
+      }
+    </script>
+  </body>
+</html>
